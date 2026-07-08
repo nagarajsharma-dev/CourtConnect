@@ -49,7 +49,7 @@ public class BookingServiceTest {
         sport  = new Sport("BADMINTON"); sport.setId(10L);
     }
 
-    /** Scenario 1: Booking a completely free slot → should succeed */
+    
     @Test
     void testRequestBooking_FreeSlot_Success() {
         when(courtRepository.findById(1L)).thenReturn(Optional.of(court1));
@@ -69,8 +69,6 @@ public class BookingServiceTest {
         assertEquals("PENDING", result.getStatus());
         verify(bookingRepository).save(any(Booking.class));
     }
-
-    /** Scenario 2: Same court + same sport + overlapping time → should FAIL */
     @Test
     void testRequestBooking_SameCourt_SameSport_Overlap_Fail() {
         when(courtRepository.findById(1L)).thenReturn(Optional.of(court1));
@@ -88,7 +86,7 @@ public class BookingServiceTest {
         assertTrue(ex.getMessage().contains("already booked for BADMINTON"));
     }
 
-    /** Scenario 3: Same user, different court, overlapping time → should FAIL (user double-booked) */
+   
     @Test
     void testRequestBooking_SameUser_DifferentCourt_Overlap_Fail() {
         when(courtRepository.findById(2L)).thenReturn(Optional.of(court2));
@@ -110,7 +108,6 @@ public class BookingServiceTest {
         assertTrue(ex.getMessage().contains("already have an active booking"));
     }
 
-    /** Scenario 4: Same user, different non-overlapping time slots → should succeed */
     @Test
     void testRequestBooking_SameUser_NonOverlappingTime_Success() {
         when(courtRepository.findById(2L)).thenReturn(Optional.of(court2));
@@ -131,7 +128,7 @@ public class BookingServiceTest {
         assertEquals("PENDING", result.getStatus());
     }
 
-    /** Scenario 5: Same court, same time, DIFFERENT sport → should succeed (multipurpose court) */
+   
     @Test
     void testRequestBooking_SameCourt_SameTime_DifferentSport_Success() {
         Sport tenniseSport = new Sport("TENNIS"); tenniseSport.setId(20L);
@@ -140,7 +137,7 @@ public class BookingServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(sportRepository.findById(20L)).thenReturn(Optional.of(tenniseSport));
 
-        // No overlap for TENNIS on court1 at this time (BADMINTON is booked, TENNIS is not)
+      
         when(bookingRepository.findOverlappingBookings(eq(1L), eq(20L), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class)))
                 .thenReturn(Collections.emptyList());
         when(bookingRepository.findOverlappingBookingsByUser(eq(1L), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class)))
